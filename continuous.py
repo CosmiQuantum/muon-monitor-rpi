@@ -12,17 +12,18 @@ def continuous_read(seconds=5, log_path=None, save=True):
 		voltage = dq.a_in_read(0)
 		if (voltage < -0.4) and save:
 			log = open(log_path, 'a+')
-			log.write(fr'0,{time.time_ns()},0'+'\n')
+			log.write(fr'0,0,{time.time_ns()}'+'\n')
 			log.close()
 
 def format_log(temp_path, log_path):
 	temp_file = pd.read_csv(temp_path)
 	log_file = pd.read_csv(log_path)
-	times = np.delete(temp_file['t_muon'], np.argwhere(np.ediff1d(temp_file['t_muon']) <= 200*1000) + 1)
+	times = np.delete(temp_file['t_muon_ns'], np.argwhere(np.ediff1d(temp_file['t_muon_ns']) <= 200*1000) + 1)
 	new_log = pd.DataFrame()
-	new_log['event'] = np.asarray(range(len(np.append(log_file['t_muon'], temp_file['t_muon']))))
+	new_log['event'] = np.asarray(range(len(np.append(log_file['t_muon'], times))))
 	new_log['t_muon'] = np.append(log_file['t_muon'], pd.to_datetime(times).astype('str'))
 	new_log['t_muon_ns'] = np.append(log_file['t_muon_ns'], times)
+	
 	new_log.to_csv(log_path, index=False)
 	os.remove(temp_path)
 	
