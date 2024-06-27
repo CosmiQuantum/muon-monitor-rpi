@@ -65,7 +65,6 @@ the_date = datetime.datetime.now()
 
 directory_path = os.path.join(datapath, the_date.strftime('%Y_%m%d'))
 
-
 if not os.path.exists(directory_path): os.mkdir(directory_path)
 
 
